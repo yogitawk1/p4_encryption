@@ -37,19 +37,37 @@ class Payload(Packet):
     def mysummary(self):
         return self.sprintf("data=%data%, encrypt=%encrypt%, type=%type%,index=%index%, skey=%skey%, cypher=%cypher%, org_data=%org_data%")
 
-bind_layers(TCP,Payload,encrypt=1)
 
 
 
 def handle_pkt(pkt):
+    bind_layers(TCP,Payload,encrypt=1)
     if ( Raw in pkt):
         print("got a packet")
         pkt.show()
-        #last = pkt.getlayer(Raw)
-        #print(last.load(Payload(encrypt=1)))
+        last = pkt.getlayer(Raw)
+        info = [last.load[i:i+4] for i in range(0,len(last.load),4)]
+        print("Payload = ")
+        int_data = int.from_bytes(info[0],"big")
+        Encrypt = int.from_bytes(info[1],"big")
+        Type = int.from_bytes(info[2],"big")
+        Index = int.from_bytes(info[3],"big")
+        skey = int.from_bytes(info[4],"big")
+        cypher = int.from_bytes(info[5],"big")
+        org_data = int.from_bytes(info[6],"big")
+        print("Data =", int_data)
+        print("Encrypt =",Encrypt) 
+        print("Type =", Type) 
+        print("Index =", Index) 
+        print("skey =", skey) 
+        print("cypher =",cypher) 
+        print("org_data =", org_data)
         hexdump(pkt)
         sys.stdout.flush()
 
+        print("Decrypting ...")
+        decrypted_data = cypher ^ skey
+        print(decrypted_data)
 
 def main():
     #ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]

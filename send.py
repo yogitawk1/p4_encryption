@@ -31,15 +31,18 @@ def get_if():
 class Payload(Packet):
       try:
            name = "Payload"
+           #fields_desc = [IntField("data",int(sys.argv[2])),
+           #               IntField("type",int(sys.argv[3])),
+           #               IntField("index",int(sys.argv[4])),
+           #               IntField("skey",int(sys.argv[5])),
+           #               IntField("cypher",None),
+           #               IntField("org_data",None)]
            fields_desc = [IntField("data",int(sys.argv[2])),
                           IntField("encrypt",1),
-                          IntField("type",int(sys.argv[3])),
-                          IntField("index",int(sys.argv[4])),
-                          IntField("skey",int(sys.argv[5])),
                           IntField("cypher",None),
-                          IntField("org_data",None)]
+                          IntField("skey",int(sys.argv[3]))]
            def mysummary(self):
-               return self.sprintf("data=%data%, encrypt=%encrypt%, type=%type%,index=%index%,skey=%skey","cypher=%cypher%","org_data=%org_data")
+               return self.sprintf("data=%data%, skey=%skey")
 
       except:
             print("No command-line arguments provided")

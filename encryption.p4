@@ -58,17 +58,13 @@ header tcp_t{
 }
 
 struct metadata {
-
 }
 
 header payload_t{
     bit<32> data;
     bit<32> encrypt;
-    bit<32> type;
-    bit<32> index;
-    bit<32> skey;
     bit<32> cypher;
-    bit<32> org_data;
+    bit<32> skey;
 }
 
 struct headers {
@@ -146,16 +142,21 @@ control MyIngress(inout headers hdr,
     }
 
     action encrypt_xor(){
-        keys.read(secret_key, hdr.payload.index);
+        /*keys.read(secret_key, hdr.payload.index);
         bit<32> tmp = hdr.payload.data ^ secret_key;
         hdr.payload.data = tmp;
+       */
+    }
+
+    action simple_encrypt(){
+        hdr.payload.cypher = hdr.payload.data ^ hdr.payload.skey;
     }
 
     action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
-        hdr.ipv4.ttl = hdr.ipv4.ttl - 2;
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
     }
 
     table ipv4_lpm {
@@ -172,9 +173,9 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
-
-        hdr.payload.cypher = hdr.payload.data ^ hdr.payload.skey;
-        hdr.payload.org_data = hdr.payload.cypher ^ hdr.payload.skey;
+        if (hdr.payload.encrypt == 1) {
+           simple_encrypt();
+        }
 
         if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();

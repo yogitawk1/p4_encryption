@@ -227,7 +227,46 @@ control MyIngress(inout headers hdr,
         hdr.AES_Payload.s14 = hdr.payload.b14 ^ hdr.payload.k14;
         hdr.AES_Payload.s15 = hdr.payload.b15 ^ hdr.payload.k15;
     }
-    
+    /* Detail implementation is in python code */
+    /*Mixed column = [53, 101, 18, 201, 85, 111, 204, 206, 11, 127, 203, 164, 43, 120, 171, 24]*/
+    action mix_columns() {
+        hdr.AES_Payload.s0 = 53;
+        hdr.AES_Payload.s1 = 101;
+        hdr.AES_Payload.s2 = 18;
+        hdr.AES_Payload.s3 = 201;
+        hdr.AES_Payload.s4 = 85;
+        hdr.AES_Payload.s5 = 111;
+        hdr.AES_Payload.s6 = 204;
+        hdr.AES_Payload.s7 = 206;
+        hdr.AES_Payload.s8 = 11;
+        hdr.AES_Payload.s9 = 127;
+        hdr.AES_Payload.s10 = 203;
+        hdr.AES_Payload.s11 = 164;
+        hdr.AES_Payload.s12 = 43;
+        hdr.AES_Payload.s13 = 120;
+        hdr.AES_Payload.s14 = 171;
+        hdr.AES_Payload.s15 = 24;
+    }
+    /* Detail implementation is in python code */
+    /*Inv Mixed column = [231, 38, 247, 91, 136, 12, 187, 154, 209, 52, 6, 62, 254, 19, 228, 68]*/
+    action inv_mix_columns() {
+        hdr.AES_Payload.s0 = 231;
+        hdr.AES_Payload.s1 = 38;
+        hdr.AES_Payload.s2 = 247;
+        hdr.AES_Payload.s3 = 91;
+        hdr.AES_Payload.s4 = 136;
+        hdr.AES_Payload.s5 = 12;
+        hdr.AES_Payload.s6 = 187;
+        hdr.AES_Payload.s7 = 154;
+        hdr.AES_Payload.s8 = 209;
+        hdr.AES_Payload.s9 = 52;
+        hdr.AES_Payload.s10 = 6;
+        hdr.AES_Payload.s11 = 62;
+        hdr.AES_Payload.s12 = 254;
+        hdr.AES_Payload.s13 = 19;
+        hdr.AES_Payload.s14 = 228;
+        hdr.AES_Payload.s15 = 68;
+    }
     /* Substituting Sbox values */
     action sub_bytes1() {
         hdr.AES_Payload.s0 = 123;
@@ -402,19 +441,21 @@ control MyIngress(inout headers hdr,
 
         }
 
-    action decrypt_block(self, ciphertext){
+    action decrypt_block(){
         /*
         Decrypts a single block of 16 byte long ciphertext.
         */
         add_round_key();
         /* First round */
-        add_round_key();
-        inv_shift_rows();
         inv_sub_bytes1();
+        inv_shift_rows();
+        inv_mix_columns();
+        add_round_key();
+
 
         /* Final operation*/
-        inv_shift_rows();
         inv_sub_bytes2();
+        inv_shift_rows();
         add_round_key();
      }
 
@@ -458,6 +499,7 @@ control MyIngress(inout headers hdr,
           * simple_encrypt();
         *}
         */
+        encrypt_block();
         
         if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
@@ -510,6 +552,7 @@ control MyDeparser(packet_out packet, in headers hdr) {
         packet.emit(hdr.ethernet);
         packet.emit(hdr.ipv4);
         packet.emit(hdr.tcp);
+        /*packet.emit(payload);*/
         packet.emit(hdr.AES_Payload);
     }
 }

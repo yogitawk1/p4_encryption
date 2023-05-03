@@ -269,22 +269,23 @@ control MyIngress(inout headers hdr,
     }
     /* Substituting Sbox values */
     action sub_bytes1() {
-        hdr.AES_Payload.s0 = 123;
-        hdr.AES_Payload.s1 = 124;
-        hdr.AES_Payload.s2 = 197;
-        hdr.AES_Payload.s3 = 124;
-        hdr.AES_Payload.s4 = 123;
-        hdr.AES_Payload.s5 = 124;
-        hdr.AES_Payload.s6 = 118;
-        hdr.AES_Payload.s7 = 124;
-        hdr.AES_Payload.s8 = 123;
-        hdr.AES_Payload.s9 = 124;
-        hdr.AES_Payload.s10 = 197;
-        hdr.AES_Payload.s11 = 124;
-        hdr.AES_Payload.s12 = 123;
-        hdr.AES_Payload.s13 = 124;
-        hdr.AES_Payload.s14 = 192;
-        hdr.AES_Payload.s15 = 130;
+
+        hdr.AES_Payload.s0 = 0x7b;
+        hdr.AES_Payload.s1 = 0x7c;
+        hdr.AES_Payload.s2 = 0xc5;
+        hdr.AES_Payload.s3 = 0x7c;
+        hdr.AES_Payload.s4 = 0x7b;
+        hdr.AES_Payload.s5 = 0x7c;
+        hdr.AES_Payload.s6 = 0x76;
+        hdr.AES_Payload.s7 = 0x7c;
+        hdr.AES_Payload.s8 = 0x7b;
+        hdr.AES_Payload.s9 = 0x7c;
+        hdr.AES_Payload.s10 = 0xc5;
+        hdr.AES_Payload.s11 = 0x7c;
+        hdr.AES_Payload.s12 = 0x7b;
+        hdr.AES_Payload.s13 = 0x7c;
+        hdr.AES_Payload.s14 = 0xc0;
+        hdr.AES_Payload.s15 = 0x82;
     }
     action sub_bytes2() {
         hdr.AES_Payload.s0 = 182;
@@ -306,22 +307,23 @@ control MyIngress(inout headers hdr,
     }
     /* Substituting InvSbox values */
     action inv_sub_bytes1() {
-        hdr.AES_Payload.s0 = 121;
-        hdr.AES_Payload.s1 = 127;
-        hdr.AES_Payload.s2 = 193;
-        hdr.AES_Payload.s3 = 121;
-        hdr.AES_Payload.s4 = 113;
-        hdr.AES_Payload.s5 = 116;
-        hdr.AES_Payload.s6 = 114;
-        hdr.AES_Payload.s7 = 122;
-        hdr.AES_Payload.s8 = 119;
-        hdr.AES_Payload.s9 = 113;
-        hdr.AES_Payload.s10 = 207;
-        hdr.AES_Payload.s11 = 119;
-        hdr.AES_Payload.s12 = 193;
-        hdr.AES_Payload.s13 = 140;
-        hdr.AES_Payload.s14 = 116;
-        hdr.AES_Payload.s15 = 108;
+    
+        hdr.AES_Payload.s0 = 0x79;
+        hdr.AES_Payload.s1 = 0x7f;
+        hdr.AES_Payload.s2 = 0xc1;
+        hdr.AES_Payload.s3 = 0x79;
+        hdr.AES_Payload.s4 = 0x71;
+        hdr.AES_Payload.s5 = 0x74;
+        hdr.AES_Payload.s6 = 0x72;
+        hdr.AES_Payload.s7 = 0x7a;
+        hdr.AES_Payload.s8 = 0x77;
+        hdr.AES_Payload.s9 = 0x71;
+        hdr.AES_Payload.s10 = 0xcf;
+        hdr.AES_Payload.s11 = 0x77;
+        hdr.AES_Payload.s12 = 0xc1;
+        hdr.AES_Payload.s13 = 0x8c;
+        hdr.AES_Payload.s14 = 0x74;
+        hdr.AES_Payload.s15 = 0x6c;
         
     }
     action inv_sub_bytes2() {

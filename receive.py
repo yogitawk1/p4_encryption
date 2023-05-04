@@ -111,8 +111,41 @@ class AES_Payload(Packet):
 decrypted = []
 cipher =[]
 k =[]
-def decryption():
-    print("test")
+def decrypt_block(info):
+    s0 = int.from_bytes(info[32],"big")
+    s1 = int.from_bytes(info[33],"big")
+    s2 = int.from_bytes(info[34],"big")
+    s3 = int.from_bytes(info[35],"big")
+    s4 = int.from_bytes(info[36],"big")
+    s5 = int.from_bytes(info[37],"big")
+    s6 = int.from_bytes(info[38],"big")
+    s7 = int.from_bytes(info[39],"big")
+    s8 = int.from_bytes(info[40],"big")
+    s9 = int.from_bytes(info[41],"big")
+    s10 = int.from_bytes(info[42],"big")
+    s11 = int.from_bytes(info[43],"big")
+    s12 = int.from_bytes(info[44],"big")
+    s13 = int.from_bytes(info[45],"big")
+    s14 = int.from_bytes(info[46],"big")
+    s15 = int.from_bytes(info[47],"big")
+    cipher.append(s0)
+    cipher.append(s1)
+    cipher.append(s2)
+    cipher.append(s3)
+    cipher.append(s4)
+    cipher.append(s5)
+    cipher.append(s6)
+    cipher.append(s7)
+    cipher.append(s8)
+    cipher.append(s9)
+    cipher.append(s10)
+    cipher.append(s11)
+    cipher.append(s12)
+    cipher.append(s13)
+    cipher.append(s14)
+    cipher.append(s15)
+    print("cipher =", cipher)
+
 
 def handle_pkt(pkt):
     #bind_layers(TCP,Payload,encrypt=1)
@@ -186,6 +219,8 @@ def handle_pkt(pkt):
        print("s0=",s0,"s1=",s1,"s2=",s2,"s3=",s3,"s4=",s4,"s5=",s5,"s6=",s6,"s7=",s7,"s8=",s8)
        print("s9=",s9,"s10=",s10,"s11=",s11,"s12=",s12,"s13=",s13,"s14=",s14,"s15=",s15)
     sys.stdout.flush()
+    print("Decrypting cipher")  
+    decrypt_block(info)
 
 def main():
     #ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]

@@ -118,7 +118,7 @@ def addRoundKey(state, roundkey):
     for i in range(len(state)):
         state[i] = state[i] ^ roundkey[i]
         
-def decrypt_block(info):
+def decrypt_block():
     print("cipher =", cipher)
     print("roundkey=",roundkey)
     addRoundKey(cipher,roundkey)
@@ -176,22 +176,22 @@ def handle_pkt(pkt):
        k15 = int.from_bytes(info[31],"big")
        print("k0=",k0,"k1=",k1,"k2=",k2,"k3=",k3,"k4=",k4,"k5=",k5,"k6=",k6,"k7=",k7,"k8=",k8)
        print("k9=",k9,"k10=",k10,"k11=",k11,"k12=",k12,"k13=",k13,"k14=",k14,"k15=",k15)
-       roundkey.append(b0)
-       roundkey.append(b1)
-       roundkey.append(b2)
-       roundkey.append(b3)
-       roundkey.append(b4)
-       roundkey.append(b5)
-       roundkey.append(b6)
-       roundkey.append(b7)
-       roundkey.append(b8)
-       roundkey.append(b9)
-       roundkey.append(b10)
-       roundkey.append(b11)
-       roundkey.append(b12)
-       roundkey.append(b13)
-       roundkey.append(b14)
-       roundkey.append(b15)
+       roundkey.append(k0)
+       roundkey.append(k1)
+       roundkey.append(k2)
+       roundkey.append(k3)
+       roundkey.append(k4)
+       roundkey.append(k5)
+       roundkey.append(k6)
+       roundkey.append(k7)
+       roundkey.append(k8)
+       roundkey.append(k9)
+       roundkey.append(k10)
+       roundkey.append(k11)
+       roundkey.append(k12)
+       roundkey.append(k13)
+       roundkey.append(k14)
+       roundkey.append(k15)
 
 
        s0 = int.from_bytes(info[32],"big")
@@ -230,7 +230,7 @@ def handle_pkt(pkt):
        cipher.append(s15)
     sys.stdout.flush()
     print("Decrypting cipher")  
-    decrypt_block(info)
+    decrypt_block()
 
 def main():
     #ifaces = [i for i in os.listdir('/sys/class/net/') if 'eth' in i]

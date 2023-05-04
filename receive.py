@@ -111,40 +111,18 @@ class AES_Payload(Packet):
 decrypted = []
 cipher =[]
 k =[]
+info=[]
+roundkey=[]
+
+def addRoundKey(state, roundkey):
+    for i in range(len(state)):
+        state[i] = state[i] ^ roundkey[i]
+        
 def decrypt_block(info):
-    s0 = int.from_bytes(info[32],"big")
-    s1 = int.from_bytes(info[33],"big")
-    s2 = int.from_bytes(info[34],"big")
-    s3 = int.from_bytes(info[35],"big")
-    s4 = int.from_bytes(info[36],"big")
-    s5 = int.from_bytes(info[37],"big")
-    s6 = int.from_bytes(info[38],"big")
-    s7 = int.from_bytes(info[39],"big")
-    s8 = int.from_bytes(info[40],"big")
-    s9 = int.from_bytes(info[41],"big")
-    s10 = int.from_bytes(info[42],"big")
-    s11 = int.from_bytes(info[43],"big")
-    s12 = int.from_bytes(info[44],"big")
-    s13 = int.from_bytes(info[45],"big")
-    s14 = int.from_bytes(info[46],"big")
-    s15 = int.from_bytes(info[47],"big")
-    cipher.append(s0)
-    cipher.append(s1)
-    cipher.append(s2)
-    cipher.append(s3)
-    cipher.append(s4)
-    cipher.append(s5)
-    cipher.append(s6)
-    cipher.append(s7)
-    cipher.append(s8)
-    cipher.append(s9)
-    cipher.append(s10)
-    cipher.append(s11)
-    cipher.append(s12)
-    cipher.append(s13)
-    cipher.append(s14)
-    cipher.append(s15)
     print("cipher =", cipher)
+    print("roundkey=",roundkey)
+    addRoundKey(cipher,roundkey)
+    print("After addRoundKey cipher =", cipher)
 
 
 def handle_pkt(pkt):
@@ -198,6 +176,22 @@ def handle_pkt(pkt):
        k15 = int.from_bytes(info[31],"big")
        print("k0=",k0,"k1=",k1,"k2=",k2,"k3=",k3,"k4=",k4,"k5=",k5,"k6=",k6,"k7=",k7,"k8=",k8)
        print("k9=",k9,"k10=",k10,"k11=",k11,"k12=",k12,"k13=",k13,"k14=",k14,"k15=",k15)
+       roundkey.append(b0)
+       roundkey.append(b1)
+       roundkey.append(b2)
+       roundkey.append(b3)
+       roundkey.append(b4)
+       roundkey.append(b5)
+       roundkey.append(b6)
+       roundkey.append(b7)
+       roundkey.append(b8)
+       roundkey.append(b9)
+       roundkey.append(b10)
+       roundkey.append(b11)
+       roundkey.append(b12)
+       roundkey.append(b13)
+       roundkey.append(b14)
+       roundkey.append(b15)
 
 
        s0 = int.from_bytes(info[32],"big")
@@ -218,6 +212,22 @@ def handle_pkt(pkt):
        s15 = int.from_bytes(info[47],"big")
        print("s0=",s0,"s1=",s1,"s2=",s2,"s3=",s3,"s4=",s4,"s5=",s5,"s6=",s6,"s7=",s7,"s8=",s8)
        print("s9=",s9,"s10=",s10,"s11=",s11,"s12=",s12,"s13=",s13,"s14=",s14,"s15=",s15)
+       cipher.append(s0)
+       cipher.append(s1)
+       cipher.append(s2)
+       cipher.append(s3)
+       cipher.append(s4)
+       cipher.append(s5)
+       cipher.append(s6)
+       cipher.append(s7)
+       cipher.append(s8)
+       cipher.append(s9)
+       cipher.append(s10)
+       cipher.append(s11)
+       cipher.append(s12)
+       cipher.append(s13)
+       cipher.append(s14)
+       cipher.append(s15)
     sys.stdout.flush()
     print("Decrypting cipher")  
     decrypt_block(info)

@@ -101,13 +101,12 @@ class AES_Payload(Packet):
                           ByteField("s14",None),
                           ByteField("s15",None)]                               
                                                                                                                                                                             
-                                                                                                                                               ]
            def mysummary(self):
-               return self.sprintf("b0=%b0%, b1=%b1% b2=%b2% b3=%b3% b4=%b4% b5=%b5% b6=%b6% b7=%b7% b8=%b8%\n
-                                    b9=%b9%, b10=%b10% b11=%b11% b12=%b12% b13=%b13% b14=%b14% b15=%b15%\n
-                                    k0=%k0%, k1=%k1% k2=%k2% k3=%k3% k4=%k4% k5=%k5% k6=%k6% k7=%k7% k8=%k8%\n
-                                    k9=%k9%, k10=%k10% k11=%k11% k12=%k12% k13=%k13% k14=%k14% k15=%k15%\n
-                                    s0=%s0%, s1=%s1% s2=%s2% s3=%s3% s4=%s4% s5=%s5% s6=%s6% s7=%s7% s8=%s8%\n
+               return self.sprintf("b0=%b0%, b1=%b1% b2=%b2% b3=%b3% b4=%b4% b5=%b5% b6=%b6% b7=%b7% b8=%b8%\
+                                    b9=%b9%, b10=%b10% b11=%b11% b12=%b12% b13=%b13% b14=%b14% b15=%b15%\
+                                    k0=%k0%, k1=%k1% k2=%k2% k3=%k3% k4=%k4% k5=%k5% k6=%k6% k7=%k7% k8=%k8%\
+                                    k9=%k9%, k10=%k10% k11=%k11% k12=%k12% k13=%k13% k14=%k14% k15=%k15%\
+                                    s0=%s0%, s1=%s1% s2=%s2% s3=%s3% s4=%s4% s5=%s5% s6=%s6% s7=%s7% s8=%s8%\
                                     s9=%s9%, s10=%s10% s11=%s11% s12=%s12% s13=%s13% s14=%s14% s15=%s15% ")
 
       except:
@@ -116,9 +115,6 @@ class AES_Payload(Packet):
 #bind_layers(TCP,Payload,encrypt=1)
 bind_layers(TCP,AES_Payload)
 def main():
-    if len(sys.argv) < 3 :
-        print("Need to pass more arguments")
-        exit(1)
     #arguments - hostip, data , encryption type , key index
     addr = socket.gethostbyname(sys.argv[1])
     iface = get_if()

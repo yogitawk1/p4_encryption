@@ -11,6 +11,7 @@ from scapy.all import IP, TCP, UDP
 from scapy.all import ShortField, IntField, LongField, BitField, FieldListField, FieldLenField
 from scapy.all import *
 from scapy.layers.inet import _IPOption_HDR
+from copy import copy
 
 
 def get_if():
@@ -142,13 +143,158 @@ def addRoundKey(state, roundkey):
     for i in range(len(state)):
         state[i] = state[i] ^ roundkey[i]
         
+def InvShiftRows(state):
+    #print("Shifted State=",state)
+    #Second row has a one-byte circular left shift.
+    #124, 118, 124, 123 -- > 123, 124, 118, 124
+    temp=[0,0,0,0]
+    temp[0] = state[4]
+    temp[1]= state[5]
+    temp[2]= state[6]
+    temp[3] = state[7]
+    #print(temp)
+    state[4] = temp[3]
+    state[5]= temp[0]
+    state[6]=temp[1]
+    state[7]= temp[2]
+    #print("second row inv = ",state)
+
+    #Third row has a two-byte circular left shift.
+    #5A 73 D5 52->D5 52 5A 73
+    temp=[0,0,0,0]
+    temp[0] = state[8]
+    temp[1]= state[9]
+    temp[2]= state[10]
+    temp[3] = state[11]
+    #print(temp)
+    state[8] = temp[2]
+    state[9]= temp[3]
+    state[10]=temp[0]
+    state[11]= temp[1]
+   # print(state)
+
+    #Fourth row has a three-byte circular left shift.
+    #31 91 CC 98  98 31 91 CC
+    #
+    temp=[0,0,0,0]
+    temp[0] = state[12]
+    temp[1]= state[13]
+    temp[2]= state[14]
+    temp[3] = state[15]
+ #   print(temp)
+    state[12] = temp[1]
+    state[13]= temp[2]
+    state[14]=temp[3]
+    state[15]= temp[0]   
+    
+#last operation is mixing columns
+from copy import copy
+
+
+def galoisMult(a, b):
+    p = 0
+    hiBitSet = 0
+    for i in range(8):
+        if b & 1 == 1:
+            p ^= a
+        hiBitSet = a & 0x80
+        a <<= 1
+        if hiBitSet == 0x80:
+            a ^= 0x1b
+        b >>= 1
+    return p % 256
+
+
+
+
+def mixColumnInv(column):
+    temp = copy(column)
+    column[0] = galoisMult(temp[0],14) ^ galoisMult(temp[3],9) ^ \
+                galoisMult(temp[2],13) ^ galoisMult(temp[1],11)
+    column[1] = galoisMult(temp[1],14) ^ galoisMult(temp[0],9) ^ \
+                galoisMult(temp[3],13) ^ galoisMult(temp[2],11)
+    column[2] = galoisMult(temp[2],14) ^ galoisMult(temp[1],9) ^ \
+                galoisMult(temp[0],13) ^ galoisMult(temp[3],11)
+    column[3] = galoisMult(temp[3],14) ^ galoisMult(temp[2],9) ^ \
+    galoisMult(temp[1],13) ^ galoisMult(temp[0],11)
+
+
+
+def InvSplitAndMixColumn(state):    
+    #print("State[]=",state)
+    column1 = [0,0,0,0]
+    column1[0] = state[0]
+    column1[1] = state[4]
+    column1[2] = state[8]
+    column1[3] = state[12]
+    #print("column 1 =",column1)
+    #mixColumn(column1)
+    #print('Mixed: ',column1)
+    mixColumnInv(column1)
+    #print('Inverse mixed', column1)
+
+    column2 = [0,0,0,0]
+    column2[0] = state[1]
+    column2[1] = state[5]
+    column2[2] = state[9]
+    column2[3] = state[13]
+
+    #print("column 2 =",column2)
+    #mixColumn(column2)
+    #print('Mixed: ',column2)
+    mixColumnInv(column2)
+    #print('Inverse mixed', column2)
+
+    column3 = [0,0,0,0]
+    column3[0] = state[2]
+    column3[1] = state[6]
+    column3[2] = state[10]
+    column3[3] = state[14]
+
+    #print("column 3 =",column3)
+    #mixColumn(column3)
+    #print('Mixed: ',column3)
+    mixColumnInv(column3)
+    #print('Inverse mixed', column3)
+
+    column4 = [0,0,0,0]
+    column4[0] = state[3]
+    column4[1] = state[7]
+    column4[2] = state[11]
+    column4[3] = state[15]
+
+    #print("column 4 =",column4)
+    #mixColumn(column4)
+    #print('Mixed: ',column4)
+    mixColumnInv(column4)
+    #print('Inverse mixed', column4)
+
+    state = [column1[0],column2[0],column3[0],column4[0],
+             column1[1],column2[1],column3[1],column4[1],
+             column1[2],column2[2],column3[2],column4[2],
+             column1[3],column2[3],column3[3],column4[3]]
+
+         
 def decrypt_block():
     print("cipher =", cipher)
     print("roundkey=",roundkey)
     addRoundKey(cipher,roundkey)
     print("After addRoundKey cipher =", cipher)
+    
+    /*First Round */
     InvsubBytes(cipher)
     print("After InvsubBytes =", cipher)
+    InvShiftRows(cipher)
+    print("After InvShiftRows =",cipher)
+    InvSplitAndMixColumn(cipher)
+    addRoundKey(cipher,roundkey)
+
+    #final operation
+    InvsubBytes(cipher)
+    print("after INV subbytes state =", cipher)
+    InvShiftRows(cipher)
+    addRoundKey(cipher,roundkey)
+    print("Decrypted message =",cipher)
 
 def handle_pkt(pkt):
     #bind_layers(TCP,Payload,encrypt=1)

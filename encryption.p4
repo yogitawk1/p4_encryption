@@ -14,10 +14,6 @@ const bit<32> XOR_KEY = 0x5;
  * roundkey 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 1 
  */
  
-
-
-
-
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -227,7 +223,7 @@ control MyIngress(inout headers hdr,
         hdr.AES_Payload.s14 = hdr.AES_Payload.b14 ^ hdr.AES_Payload.k14;
         hdr.AES_Payload.s15 = hdr.AES_Payload.b15 ^ hdr.AES_Payload.k15;
     }
-    action add_round_key(){
+    action add_round_key2(){
         hdr.AES_Payload.s0 = hdr.AES_Payload.s0 ^ hdr.AES_Payload.k0;
         hdr.AES_Payload.s1 = hdr.AES_Payload.s1 ^ hdr.AES_Payload.k1;
         hdr.AES_Payload.s2 = hdr.AES_Payload.s2 ^ hdr.AES_Payload.k2;
@@ -245,49 +241,8 @@ control MyIngress(inout headers hdr,
         hdr.AES_Payload.s14 = hdr.AES_Payload.s14 ^ hdr.AES_Payload.k14;
         hdr.AES_Payload.s15 = hdr.AES_Payload.s15 ^ hdr.AES_Payload.k15;
     }
-    /* Detail implementation is in python code */
-    /*Mixed column = [53, 101, 18, 201, 85, 111, 204, 206, 11, 127, 203, 164, 43, 120, 171, 24]*/
-    action mix_columns() {
-        hdr.AES_Payload.s0 = 53;
-        hdr.AES_Payload.s1 = 101;
-        hdr.AES_Payload.s2 = 18;
-        hdr.AES_Payload.s3 = 201;
-        hdr.AES_Payload.s4 = 85;
-        hdr.AES_Payload.s5 = 111;
-        hdr.AES_Payload.s6 = 204;
-        hdr.AES_Payload.s7 = 206;
-        hdr.AES_Payload.s8 = 11;
-        hdr.AES_Payload.s9 = 127;
-        hdr.AES_Payload.s10 = 203;
-        hdr.AES_Payload.s11 = 164;
-        hdr.AES_Payload.s12 = 43;
-        hdr.AES_Payload.s13 = 120;
-        hdr.AES_Payload.s14 = 171;
-        hdr.AES_Payload.s15 = 24;
-    }
-    /* Detail implementation is in python code */
-    /*Inv Mixed column = [231, 38, 247, 91, 136, 12, 187, 154, 209, 52, 6, 62, 254, 19, 228, 68]*/
-    action inv_mix_columns() {
-        hdr.AES_Payload.s0 = 231;
-        hdr.AES_Payload.s1 = 38;
-        hdr.AES_Payload.s2 = 247;
-        hdr.AES_Payload.s3 = 91;
-        hdr.AES_Payload.s4 = 136;
-        hdr.AES_Payload.s5 = 12;
-        hdr.AES_Payload.s6 = 187;
-        hdr.AES_Payload.s7 = 154;
-        hdr.AES_Payload.s8 = 209;
-        hdr.AES_Payload.s9 = 52;
-        hdr.AES_Payload.s10 = 6;
-        hdr.AES_Payload.s11 = 62;
-        hdr.AES_Payload.s12 = 254;
-        hdr.AES_Payload.s13 = 19;
-        hdr.AES_Payload.s14 = 228;
-        hdr.AES_Payload.s15 = 68;
-    }
     /* Substituting Sbox values */
     action sub_bytes1() {
-
         hdr.AES_Payload.s0 = 0x7b;
         hdr.AES_Payload.s1 = 0x7c;
         hdr.AES_Payload.s2 = 0xc5;
@@ -305,28 +260,8 @@ control MyIngress(inout headers hdr,
         hdr.AES_Payload.s14 = 0xc0;
         hdr.AES_Payload.s15 = 0x82;
     }
-    action sub_bytes2() {
-
-        hdr.AES_Payload.s0 = 0xb6;
-        hdr.AES_Payload.s1 = 0xd2;
-        hdr.AES_Payload.s2 = 0x78;
-        hdr.AES_Payload.s3= 0xb6;
-        hdr.AES_Payload.s4 = 0xa3;
-        hdr.AES_Payload.s5 = 0x92;
-        hdr.AES_Payload.s6 = 0x40;
-        hdr.AES_Payload.s7 = 0xda;
-        hdr.AES_Payload.s8 = 0xf5;
-        hdr.AES_Payload.s9 = 0xa3;
-        hdr.AES_Payload.s10 = 0x8a;
-        hdr.AES_Payload.s11 = 0xf5;
-        hdr.AES_Payload.s12 = 0x78;
-        hdr.AES_Payload.s13 = 0x64;
-        hdr.AES_Payload.s14 = 0x92;
-        hdr.AES_Payload.s15 = 0x50;
-    }
     /* Substituting InvSbox values */
     action inv_sub_bytes1() {
-    
         hdr.AES_Payload.s0 = 0x79;
         hdr.AES_Payload.s1 = 0x7f;
         hdr.AES_Payload.s2 = 0xc1;
@@ -343,28 +278,28 @@ control MyIngress(inout headers hdr,
         hdr.AES_Payload.s13 = 0x8c;
         hdr.AES_Payload.s14 = 0x74;
         hdr.AES_Payload.s15 = 0x6c;
-        
+
     }
-    action inv_sub_bytes2() {
-        hdr.AES_Payload.s0 = 0x3;
-        hdr.AES_Payload.s1 = 0x1;
-        hdr.AES_Payload.s2 = 0x7;
-        hdr.AES_Payload.s3 = 0x1;
-        hdr.AES_Payload.s4 = 0x1;
-        hdr.AES_Payload.s5 = 0xf;
-        hdr.AES_Payload.s6 = 0x1;
-        hdr.AES_Payload.s7 = 0x3;
-        hdr.AES_Payload.s8 = 0x7;
-        hdr.AES_Payload.s9 = 0x1;
-        hdr.AES_Payload.s10 = 0x3;
-        hdr.AES_Payload.s11 = 0x1;
-        hdr.AES_Payload.s12 = 0x11;
-        hdr.AES_Payload.s13 = 0x3;
-        hdr.AES_Payload.s14 = 0x1;
-        hdr.AES_Payload.s15 = 0x1f;   
+   action sub_bytes2() {
+        hdr.AES_Payload.s0 = 0xb6;
+        hdr.AES_Payload.s1 = 0xd2;
+        hdr.AES_Payload.s2 = 0x78;
+        hdr.AES_Payload.s3 = 0xb6;
+        hdr.AES_Payload.s4 = 0xda;
+        hdr.AES_Payload.s5 = 0xa3;
+        hdr.AES_Payload.s6 = 0x92;
+        hdr.AES_Payload.s7 = 0x40;
+        hdr.AES_Payload.s8 = 0x8a;
+        hdr.AES_Payload.s9 = 0xf5;
+        hdr.AES_Payload.s10 = 0xf5;
+        hdr.AES_Payload.s11 = 0xa3;
+        hdr.AES_Payload.s12 = 0x64;
+        hdr.AES_Payload.s13 = 0x92;
+        hdr.AES_Payload.s14 = 0x50;
+        hdr.AES_Payload.s15 = 0x78;
     }
-    
-    /* ShiftRows */
+
+        /* ShiftRows */
     action shift_rows() {
         /* First row as it is */
         /*Second row has a one-byte circular left shift.*/
@@ -372,8 +307,8 @@ control MyIngress(inout headers hdr,
         meta.t5 = hdr.AES_Payload.s5;
         meta.t6 = hdr.AES_Payload.s6;
         meta.t7 = hdr.AES_Payload.s7;
-        
-        hdr.AES_Payload.s4 = meta.t5; 
+
+        hdr.AES_Payload.s4 = meta.t5;
         hdr.AES_Payload.s5 = meta.t6;
         hdr.AES_Payload.s6 = meta.t7;
         hdr.AES_Payload.s7 = meta.t4;
@@ -383,61 +318,43 @@ control MyIngress(inout headers hdr,
         meta.t9 = hdr.AES_Payload.s9;
         meta.t10 = hdr.AES_Payload.s10;
         meta.t11 = hdr.AES_Payload.s11;
-        
-        hdr.AES_Payload.s8 = meta.t10; 
+
+        hdr.AES_Payload.s8 = meta.t10;
         hdr.AES_Payload.s9 = meta.t11;
         hdr.AES_Payload.s10 = meta.t8;
         hdr.AES_Payload.s11 = meta.t9;
-        
-        /* Fourth Row has 3 byte circulation */
+       /* Fourth Row has 3 byte circulation */
         meta.t12 = hdr.AES_Payload.s12;
         meta.t13 = hdr.AES_Payload.s13;
         meta.t14 = hdr.AES_Payload.s14;
         meta.t15 = hdr.AES_Payload.s15;
-        
-        hdr.AES_Payload.s12 = meta.t15; 
+
+        hdr.AES_Payload.s12 = meta.t15;
         hdr.AES_Payload.s13 = meta.t12;
         hdr.AES_Payload.s14 = meta.t13;
         hdr.AES_Payload.s15 = meta.t14;
 
     }
-    /* inv_shift_rows */
-    action inv_shift_rows() {
-        /* First row as it is */
-        /*Second row has a one-byte circular left shift.*/
-        meta.t4 = hdr.AES_Payload.s4;
-        meta.t5 = hdr.AES_Payload.s5;
-        meta.t6 = hdr.AES_Payload.s6;
-        meta.t7 = hdr.AES_Payload.s7;
-        
-        hdr.AES_Payload.s4 = meta.t7; 
-        hdr.AES_Payload.s5 = meta.t4;
-        hdr.AES_Payload.s6 = meta.t5;
-        hdr.AES_Payload.s7 = meta.t6;
-
-        /* Third row has a two-byte circular left shift. */
-        meta.t8 = hdr.AES_Payload.s8;
-        meta.t9 = hdr.AES_Payload.s9;
-        meta.t10 = hdr.AES_Payload.s10;
-        meta.t11 = hdr.AES_Payload.s11;
-        
-        hdr.AES_Payload.s8 = meta.t10; 
-        hdr.AES_Payload.s9 = meta.t11;
-        hdr.AES_Payload.s10 = meta.t8;
-        hdr.AES_Payload.s11 = meta.t9;
-        
-        /* Fourth Row has 3 byte circulation */
-        meta.t12 = hdr.AES_Payload.s12;
-        meta.t13 = hdr.AES_Payload.s13;
-        meta.t14 = hdr.AES_Payload.s14;
-        meta.t15 = hdr.AES_Payload.s15;
-        
-        hdr.AES_Payload.s12 = meta.t13; 
-        hdr.AES_Payload.s13 = meta.t14;
-        hdr.AES_Payload.s14 = meta.t15;
-        hdr.AES_Payload.s15 = meta.t12;
-
+    action mix_columns() { 
+        hdr.AES_Payload.s0 = 0x7b;
+        hdr.AES_Payload.s1 = 0x7c;
+        hdr.AES_Payload.s2 = 0xc5;
+        hdr.AES_Payload.s3 = 0x7c;
+        hdr.AES_Payload.s4 = 0x7c;
+        hdr.AES_Payload.s5 = 0x76;
+        hdr.AES_Payload.s6 = 0x7c;
+        hdr.AES_Payload.s7 = 0x7b;
+        hdr.AES_Payload.s8 = 0xc5;
+        hdr.AES_Payload.s9 = 0x7c;
+        hdr.AES_Payload.s10 = 0x7b;
+        hdr.AES_Payload.s11 = 0x7c;
+        hdr.AES_Payload.s12 = 0x82;
+        hdr.AES_Payload.s13 = 0x7b;
+        hdr.AES_Payload.s14 = 0x7c;
+        hdr.AES_Payload.s15 = 0xc0;
     }
+
+
     action encrypt_block(){
         /* AES is block Algorithm.
          * Encrypts a single block of 16 byte long plaintext.
@@ -445,38 +362,25 @@ control MyIngress(inout headers hdr,
          * is created to demonstrate functionality and this is considered as 
          * plain text here
          */
-        
+       /* starting xor */ 
         add_round_key();
-
-        /* First round */
-            sub_bytes1();
-            shift_rows();
-            mix_columns();
-            add_round_key2();
-            
-        /* Final operation*/
-        sub_bytes2();
-        shift_rows();
+       /*first round*/
+        sub_bytes1();
+        shift_rows(); 
+        mix_columns();
         add_round_key2();
-
-        }
+        /*final round */
+        sub_bytes2();
+        shift_rows(); 
+        add_round_key2();
+    }
 
     action decrypt_block(){
         /*
         Decrypts a single block of 16 byte long ciphertext.
         */
-        add_round_key();
-        /* First round */
+        add_round_key2();
         inv_sub_bytes1();
-        inv_shift_rows();
-        inv_mix_columns();
-        add_round_key2();
-
-
-        /* Final operation*/
-        inv_sub_bytes2();
-        inv_shift_rows();
-        add_round_key2();
      }
 
     action drop() {
@@ -518,9 +422,9 @@ control MyIngress(inout headers hdr,
         /*if (hdr.payload.encrypt == 1) {
           * simple_encrypt();
         *}
+        decrypt_block();
         */
         encrypt_block();
-        Decrypt_block();
         
         if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();

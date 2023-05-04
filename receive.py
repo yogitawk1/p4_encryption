@@ -117,12 +117,20 @@ def decryption():
 def handle_pkt(pkt):
     #bind_layers(TCP,Payload,encrypt=1)
     bind_layers(TCP,AES_Payload)
-    if ( Raw in pkt):
-        print("got a packet")
-        pkt.show()
-        last = pkt.getlayer(Raw)
-        info = [last.load[i:i+4] for i in range(0,len(last.load),4)]
-        print("Received Payload: ",info)
+    print("got a packet")
+    pkt.show()
+    if( Raw in pkt):
+       aes = ether()/IP()/TCP()/Raw(load=AES_Payload)
+       aes.show()
+       last = pkt.getlayer(Raw)
+       info = [last.load[i:i+4] for i in range(0,len(last.load),4)]
+       print("Received Payload: ",info)
+       b0 = bytes.from_bytes(info[1],"small")
+       print("b0 =",b0)
+       hexdump(pkt)
+    sys.stdout.flush()
+
+    #if ( Raw in pkt):
         #Encrypt = int.from_bytes(info[1],"big")
         #cypher = int.from_bytes(info[2],"big")
         #skey = int.from_bytes(info[3],"big")
@@ -137,10 +145,6 @@ def handle_pkt(pkt):
         #print("Type =", Type) 
         #print("Index =", Index) 
         #print("org_data =", org_data)
-        hexdump(pkt)
-        sys.stdout.flush()
-
-        print("Decrypting cypher Data...")
         #decrypted_data = cypher ^ skey
         #print(decrypted_data)
 
